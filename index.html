@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ECOSAFE — BDO · Ochrona środowiska · BHP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;450;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script src="copy.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="shared.jsx"></script>
+  <script type="text/babel" src="home.jsx"></script>
+  <script type="text/babel" src="home-more.jsx"></script>
+  <script type="text/babel" src="pages.jsx"></script>
+
+  <script type="text/babel" data-presets="react">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "accent": "sage",
+      "density": "comfortable",
+      "showMarquee": true,
+      "serifItalicInDisplay": true
+    }/*EDITMODE-END*/;
+
+    function getRoute() {
+      const h = (window.location.hash || "#home").replace("#","");
+      return ["home","bdo","doradztwo","bhp","kontakt"].includes(h) ? h : "home";
+    }
+
+    function App() {
+      const [route, setRouteState] = React.useState(getRoute());
+      const [lang, setLang] = React.useState(() => localStorage.getItem("ecosafe-lang") || "pl");
+      const [tweaks, setTweaks] = window.useTweaks ? window.useTweaks(TWEAK_DEFAULTS) : [TWEAK_DEFAULTS, ()=>{}];
+
+      const setRoute = (r) => {
+        setRouteState(r);
+        window.location.hash = "#" + r;
+        window.scrollTo({ top: 0, behavior: "instant" });
+      };
+
+      React.useEffect(() => {
+        const onHash = () => setRouteState(getRoute());
+        window.addEventListener("hashchange", onHash);
+        return () => window.removeEventListener("hashchange", onHash);
+      }, []);
+
+      React.useEffect(() => { localStorage.setItem("ecosafe-lang", lang); document.documentElement.lang = lang; }, [lang]);
+
+      // Apply accent tweak
+      React.useEffect(() => {
+        const root = document.documentElement;
+        const accents = {
+          sage:   { sage: "#5C8A5A", deep: "#497548", leaf: "#C9D6B8", leafSoft: "#DCE4CC" },
+          olive:  { sage: "#8A9A5B", deep: "#6E7E45", leaf: "#D6DCB8", leafSoft: "#E2E7CC" },
+          forest: { sage: "#2E7D5B", deep: "#1F6145", leaf: "#A8D6BE", leafSoft: "#CFE6DA" },
+          clay:   { sage: "#C05F3C", deep: "#A24A2E", leaf: "#E6B89D", leafSoft: "#EFD2BF" },
+        };
+        const a = accents[tweaks.accent] || accents.sage;
+        root.style.setProperty("--sage", a.sage);
+        root.style.setProperty("--sage-deep", a.deep);
+        root.style.setProperty("--leaf", a.leaf);
+        root.style.setProperty("--leaf-soft", a.leafSoft);
+      }, [tweaks.accent]);
+
+      const t = window.COPY[lang];
+
+      return (
+        <React.Fragment>
+          <Nav route={route} setRoute={setRoute} lang={lang} setLang={setLang}/>
+          {route === "home" && (
+            <React.Fragment>
+              <Hero lang={lang} setRoute={setRoute}/>
+              {tweaks.showMarquee && <Marquee items={t.marquee}/>}
+              <Pillars lang={lang} setRoute={setRoute}/>
+              <ServicePicker lang={lang} setRoute={setRoute}/>
+              <Quiz lang={lang} setRoute={setRoute}/>
+              <About lang={lang}/>
+              <Testimonials lang={lang}/>
+              <CTABig lang={lang} setRoute={setRoute}/>
+            </React.Fragment>
+          )}
+          {route === "bdo" && <BDOPage lang={lang} setRoute={setRoute}/>}
+          {route === "doradztwo" && <DoradztwoPage lang={lang} setRoute={setRoute}/>}
+          {route === "bhp" && <BHPPage lang={lang} setRoute={setRoute}/>}
+          {route === "kontakt" && <ContactPage lang={lang}/>}
+          <Footer lang={lang} setRoute={setRoute}/>
+
+          {window.TweaksPanel && (
+            <TweaksPanel title="Tweaks">
+              <TweakSection title={lang==='pl'?'Kolor akcentu':'Accent color'}>
+                <TweakRadio
+                  value={tweaks.accent}
+                  onChange={v => setTweaks({ accent: v })}
+                  options={[
+                    { value: "sage", label: "Sage" },
+                    { value: "olive", label: "Olive" },
+                    { value: "forest", label: "Forest" },
+                    { value: "clay", label: "Clay" },
+                  ]}
+                />
+              </TweakSection>
+              <TweakSection title={lang==='pl'?'Elementy strony':'Page elements'}>
+                <TweakToggle
+                  label={lang==='pl'?'Marquee na home':'Home marquee'}
+                  value={tweaks.showMarquee}
+                  onChange={v => setTweaks({ showMarquee: v })}
+                />
+              </TweakSection>
+              <TweakSection title={lang==='pl'?'Język':'Language'}>
+                <TweakRadio
+                  value={lang}
+                  onChange={setLang}
+                  options={[{value:"pl",label:"Polski"},{value:"en",label:"English"}]}
+                />
+              </TweakSection>
+            </TweaksPanel>
+          )}
+        </React.Fragment>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App/>);
+  </script>
+</body>
+</html>
