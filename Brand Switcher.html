@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Brand Switcher — ECOSAFE ↔ Akademia</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;450;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="switcher.css"/>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="switcher.jsx"></script>
+
+  <script type="text/babel" data-presets="react">
+    const AB_W = 1280;
+    const AB_H = 620;
+
+    function App() {
+      return (
+        <DesignCanvas
+          title="Przełącznik brandów — ECOSAFE ↔ Akademia"
+          subtitle="3 warianty, każdy w dwóch kontekstach (gdy użytkownik jest na ecosafe.pl vs akademia.ecosafe.pl). Aktywny stan podpowiada, gdzie jesteś; nieaktywny linkuje do drugiej strony."
+        >
+          <DCSection
+            id="variant-a"
+            title="Wariant A · Pill switcher przy logo"
+            subtitle="Przełącznik wbudowany w obszar logo. Najmniejszy footprint wizualny, najbardziej oczywista nawigacja: aktywny tab dziedziczy kolor akcentu danej strony (zielony / morelowy)."
+          >
+            <DCArtboard id="a-ecosafe" label="Widok: ecosafe.pl" width={AB_W} height={AB_H}>
+              <VariantA context="ecosafe" />
+            </DCArtboard>
+            <DCArtboard id="a-akademia" label="Widok: akademia.ecosafe.pl" width={AB_W} height={AB_H}>
+              <VariantA context="akademia" />
+            </DCArtboard>
+          </DCSection>
+
+          <DCSection
+            id="variant-b"
+            title="Wariant B · Top utility bar nad nawigacją"
+            subtitle="Cienki, ciemny pasek na samej górze ekranu z dwoma 'tabami' produktów, z krótkim opisem ('Usługi dla firm' / 'Kursy online'). Wzorzec znany z Google, Atlassian, Notion."
+          >
+            <DCArtboard id="b-ecosafe" label="Widok: ecosafe.pl" width={AB_W} height={AB_H}>
+              <VariantB context="ecosafe" />
+            </DCArtboard>
+            <DCArtboard id="b-akademia" label="Widok: akademia.ecosafe.pl" width={AB_W} height={AB_H}>
+              <VariantB context="akademia" />
+            </DCArtboard>
+          </DCSection>
+
+          <DCSection
+            id="variant-c"
+            title="Wariant C · Brand z 'app launcher' popoverem"
+            subtitle="Logo ECOSAFE z ikoną launchera. Klik otwiera kartę produktów z opisem każdego. Najczystszy w spoczynku, ale wymaga interakcji żeby zobaczyć, że jest druga strona. Pokazane z otwartym popoverem."
+          >
+            <DCArtboard id="c-ecosafe" label="Widok: ecosafe.pl" width={AB_W} height={AB_H}>
+              <VariantC context="ecosafe" />
+            </DCArtboard>
+            <DCArtboard id="c-akademia" label="Widok: akademia.ecosafe.pl" width={AB_W} height={AB_H}>
+              <VariantC context="akademia" />
+            </DCArtboard>
+          </DCSection>
+
+          <DCPostIt x={60} y={60} width={300}>
+            <strong>Jak czytać?</strong>
+            <br/><br/>
+            Lewa kolumna = widok z ECOSAFE.<br/>
+            Prawa kolumna = widok z Akademii.<br/><br/>
+            Każdy artboard można otworzyć na pełen ekran (kliknij ikonę rozszerz w nagłówku).
+          </DCPostIt>
+        </DesignCanvas>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App/>);
+  </script>
+</body>
+</html>

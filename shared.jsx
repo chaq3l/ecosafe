@@ -6,10 +6,14 @@ const Arrow = ({ dir = "right" }) =>
   </span>;
 
 
-const Logo = () =>
-<div className="logo" style={{ gap: 0 }}>
-    <img src="assets/logo.png" alt="ECOSAFE" style={{ display: "block", height: "36px", width: "auto", objectFit: "cover" }} />
-  </div>;
+const Logo = ({ size = "nav" }) => {
+  const heights = { nav: 80, footer: 160 };
+  return (
+    <div className="logo" style={{ gap: 0 }}>
+      <img src="assets/ecosafe-logo.png" alt="ECOSAFE" style={{ display: "block", height: heights[size] + "px", width: "auto", objectFit: "contain" }} />
+    </div>
+  );
+};
 
 
 const LangToggle = ({ lang, onChange }) =>
@@ -24,21 +28,26 @@ const Nav = ({ route, setRoute, lang, setLang }) => {
   const items = [
   ["home", t.home],
   ["bdo", t.bdo],
-  ["doradztwo", t.doradztwo],
-  ["bhp", t.bhp],
+  ["o-mnie", t.about],
   ["kontakt", t.kontakt]];
 
   return (
     <nav className="nav">
       <div className="nav-inner">
-        <a href="#home" onClick={(e) => {e.preventDefault();setRoute("home");}}>
-          <Logo />
-        </a>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flexShrink: 0 }}>
+          <a href="#home" onClick={(e) => {e.preventDefault();setRoute("home");}} style={{ flexShrink: 0 }}>
+            <Logo />
+          </a>
+          {window.BrandSwitcher && <BrandSwitcher current="ecosafe" />}
+        </div>
         <div className="nav-links">
-          {items.map(([k, v]) =>
-          <a key={k} href={"#" + k}
-          onClick={(e) => {e.preventDefault();setRoute(k);}}
-          className={"nav-link " + (route === k ? "active" : "")}>{v}</a>
+          {items.map(([k, v], idx) =>
+          <React.Fragment key={k}>
+            <a href={"#" + k}
+            onClick={(e) => {e.preventDefault();setRoute(k);}}
+            className={"nav-link " + (route === k ? "active" : "")}>{v}</a>
+            {idx === 0 && window.OfferMenu && <OfferMenu route={route} setRoute={setRoute} lang={lang}/>}
+          </React.Fragment>
           )}
           <div style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: 10, paddingLeft: 14, borderLeft: "1px solid var(--line)" }}>
             <a href="tel:+48791045130" className="nav-link" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--mono)", fontSize: 12.5, letterSpacing: "0.02em" }} aria-label="Zadzwoń">
@@ -83,7 +92,7 @@ const Footer = ({ lang, setRoute }) => {
     <footer style={{ borderTop: "1px solid var(--line)", padding: "72px 0 40px", background: "var(--bg-soft)" }}>
       <div className="container" style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr 1fr 1fr", gap: 40 }}>
         <div>
-          <Logo />
+          <Logo size="footer" />
           <p style={{ marginTop: 16, color: "var(--ink-muted)", maxWidth: 340 }}>
             {t.footer.tag}
           </p>
@@ -111,10 +120,10 @@ const Footer = ({ lang, setRoute }) => {
       </div>
       <div className="container" style={{ marginTop: 64, display: "flex", justifyContent: "space-between", fontFamily: "var(--mono)", fontSize: 12, color: "var(--ink-muted)", letterSpacing: "0.08em" }}>
         <span>{t.footer.rights}</span>
-        <span>MADE WITH CARE · KRAKÓW</span>
+        <span>MADE WITH CARE · SOSNOWIEC
+</span>
       </div>
     </footer>);
-
 };
 
 Object.assign(window, { Arrow, Logo, LangToggle, Nav, Marquee, Placeholder, Footer });

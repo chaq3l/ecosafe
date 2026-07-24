@@ -189,13 +189,36 @@ const Testimonials = ({ lang }) => {
       <div className="container-wide">
         <div className="eyebrow" style={{ marginBottom: 16 }}>{t.eyebrow}</div>
         <h2 className="h2" style={{ maxWidth: 900, marginBottom: 56 }}>{t.title}</h2>
-        <div className="grid grid-3">
-          {t.items.map((it, i) => (
-            <blockquote key={i} className="card" style={{ margin: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 280 }}>
-              <div style={{ fontFamily: "var(--serif)", fontSize: 22, lineHeight: 1.3, color: "var(--ink)" }}>„{it.q}"</div>
-              <footer style={{ marginTop: 24, fontSize: 13, color: "var(--ink-muted)", fontFamily: "var(--mono)", letterSpacing: "0.05em" }}>— {it.who}</footer>
-            </blockquote>
-          ))}
+
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1.4fr) minmax(0,1fr)", gap: 64, alignItems: "start" }}>
+          {/* Education timeline */}
+          <div>
+            <div className="eyebrow" style={{ color: "var(--sage)", marginBottom: 24 }}>{t.education_title}</div>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {t.education.map((e, i) => (
+                <li key={i} style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: 24, padding: "22px 0", borderTop: "1px solid var(--line)" }}>
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 13, color: "var(--ink-muted)", letterSpacing: "0.05em", paddingTop: 4 }}>{e.year}</div>
+                  <div>
+                    <div style={{ fontFamily: "var(--serif)", fontSize: 22, lineHeight: 1.25, color: "var(--ink)", marginBottom: 6 }}>{e.school}</div>
+                    <div style={{ fontSize: 15, color: "var(--ink-muted)", lineHeight: 1.5 }}>{e.detail}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Courses & certificates */}
+          <div style={{ position: "sticky", top: 120 }}>
+            <div className="eyebrow" style={{ color: "var(--sage)", marginBottom: 24 }}>{t.courses_title}</div>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 14 }}>
+              {t.courses.map((c, i) => (
+                <li key={i} className="card" style={{ margin: 0, padding: "18px 22px", display: "flex", gap: 14, alignItems: "flex-start" }}>
+                  <span style={{ color: "var(--sage)", fontFamily: "var(--mono)", fontSize: 13, letterSpacing: "0.05em", paddingTop: 2, flex: "0 0 auto" }}>{String(i + 1).padStart(2, "0")}</span>
+                  <span style={{ fontSize: 15, lineHeight: 1.5, color: "var(--ink)" }}>{c}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -205,8 +228,25 @@ const Testimonials = ({ lang }) => {
 const CTABig = ({ lang, setRoute }) => {
   const t = window.COPY[lang].cta;
   return (
-    <section style={{ background: "var(--ink)", color: "var(--cream)" }}>
-      <div className="container" style={{ textAlign: "center" }}>
+    <section style={{ background: "var(--ink)", color: "var(--cream)", position: "relative", overflow: "hidden" }}>
+      <img
+        src="assets/ecosafe-logo.png"
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          right: "-8%",
+          top: "50%",
+          transform: "translateY(-50%)",
+          height: "140%",
+          width: "auto",
+          opacity: 0.05,
+          filter: "invert(1) grayscale(1) contrast(1.2)",
+          pointerEvents: "none",
+          userSelect: "none",
+        }}
+      />
+      <div className="container" style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
         <h2 className="display" style={{ color: "var(--cream)", marginBottom: 32 }}>
           {t.title_pre} <em style={{ color: "var(--leaf)" }}>{t.title_em}</em>
         </h2>

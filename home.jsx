@@ -78,7 +78,76 @@ const Hero = ({ lang, setRoute }) => {
 
 const Pillars = ({ lang, setRoute }) => {
   const t = window.COPY[lang].pillars;
-  const routes = ["bdo", "doradztwo", "bhp"];
+
+  const handleClick = (item) => {
+    if (item.route === "akademia-bhp" || item.route === "akademia-os") {
+      setRoute(item.route);
+      return;
+    }
+    setRoute(item.route);
+    if (item.anchor) {
+      // scroll to anchor after route change settles
+      setTimeout(() => {
+        const el = document.getElementById(item.anchor);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 80);
+    }
+  };
+
+  const renderFirmCard = (item, i) => (
+    <div key={i} className="card pillar-card" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <div className="pillar-card-media" style={{ background: i === 0 ? "#2E4A36" : i === 1 ? "#3E5A42" : "#DCE4CC" }}>
+        {item.img === "pillar-bdo" && <img src="assets/pillar-bdo.png?v=2" alt="" />}
+        {item.img === "pillar-doradztwo" && <img src="assets/pillar-doradztwo.png?v=2" alt="" />}
+        {item.img === "pillar-bhp" && <img src="assets/pillar-bhp.png" alt="" />}
+        <div className="pillar-card-tint" style={{ background: i === 0 ? "linear-gradient(135deg, rgba(217,180,120,0.22) 0%, rgba(217,180,120,0) 60%)" : i === 1 ? "linear-gradient(135deg, rgba(245,222,179,0.28) 0%, rgba(201,157,120,0.12) 100%)" : "linear-gradient(135deg, rgba(214,162,144,0.28) 0%, rgba(214,162,144,0) 65%)" }} />
+        <div className="pillar-card-badge">{item.n} — {item.tag}</div>
+      </div>
+      <div className="pillar-card-body">
+        <h3 className="h3" style={{ margin: "0 0 12px" }}>{item.title}</h3>
+        <p style={{ color: "var(--ink-muted)", margin: "0 0 20px", flex: 1 }}>{item.body}</p>
+        <ul className="pillar-card-bullets">
+          {item.bullets.map((b, j) =>
+            <li key={j}><span>{b}</span><span style={{ color: "var(--sage)" }}>✓</span></li>
+          )}
+        </ul>
+        <button className="btn btn-outline" style={{ alignSelf: "flex-start" }} onClick={() => handleClick(item)}>
+          {lang === 'pl' ? 'Dowiedz się więcej' : 'Learn more'} <Arrow />
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderProCard = (item, i) => (
+    <div key={i} className={"pillar-card-pro theme-" + (item.theme || "bhp-pro")}>
+      <div className="pillar-card-pro-decor"></div>
+      <div className="pillar-card-pro-head">
+        <div className="pillar-card-pro-mark">
+          {item.theme === "os-pro" ? (
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2c-2 4 1 7 3 8-5 1-7 5-7 8 3-1 6-3 7-5 1 2 4 4 7 5 0-3-2-7-7-8 2-1 5-4 3-8-2 2-4 3-3 5-1-2-3-3-3-5z"/></svg>
+          ) : (
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/></svg>
+          )}
+        </div>
+        <div className="pillar-card-pro-tag">{item.n} — {item.tag}</div>
+      </div>
+      <h3 className="h2 pillar-card-pro-title">{item.title}</h3>
+      <p className="pillar-card-pro-body">{item.body}</p>
+      <ul className="pillar-card-pro-bullets">
+        {item.bullets.map((b, j) =>
+          <li key={j}>{b}</li>
+        )}
+      </ul>
+      <div className="pillar-card-pro-foot">
+        {item.coming_soon && <span className="pillar-card-pro-soon">Wkrótce</span>}
+        <button className="btn pillar-card-pro-cta" onClick={() => handleClick(item)}>
+          {lang === 'pl' ? 'Zobacz kursy' : 'See courses'}
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <section style={{ borderTop: "1px solid var(--line)" }}>
       <div className="container-wide">
@@ -90,39 +159,52 @@ const Pillars = ({ lang, setRoute }) => {
           <p className="lead" style={{ alignSelf: "end" }}>{t.lead}</p>
         </div>
 
-        <div className="grid grid-3">
-          {t.items.map((item, i) =>
-          <div key={i} className="card" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-              <div style={{ height: 240, position: "relative", background: i === 0 ? "#2E4A36" : i === 1 ? "#3E5A42" : "#DCE4CC", overflow: "hidden" }}>
-                {i === 0 &&
-              <img src="assets/pillar-bdo.png?v=2" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-              }
-                {i === 1 &&
-              <img src="assets/pillar-doradztwo.png?v=2" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-              }
-                {i === 2 &&
-              <img src="assets/pillar-bhp.png" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-              }
-                {/* Subtle color tint to break up the green monotony */}
-                <div style={{ position: "absolute", inset: 0, background: i === 0 ? "linear-gradient(135deg, rgba(217,180,120,0.22) 0%, rgba(217,180,120,0) 60%)" : i === 1 ? "linear-gradient(135deg, rgba(245,222,179,0.28) 0%, rgba(201,157,120,0.12) 100%)" : "linear-gradient(135deg, rgba(214,162,144,0.28) 0%, rgba(214,162,144,0) 65%)", mixBlendMode: "overlay", pointerEvents: "none" }} />
-                <div style={{ position: "absolute", top: 16, left: 20, color: "var(--ink)", fontFamily: "var(--mono)", fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", zIndex: 2, background: "rgba(251,248,241,0.88)", padding: "5px 10px", borderRadius: 4, backdropFilter: "blur(2px)" }}>{item.n} — {item.tag}</div>
-              </div>
-              <div style={{ padding: 28, flex: 1, display: "flex", flexDirection: "column" }}>
-                <h3 className="h3" style={{ margin: "0 0 12px" }}>{item.title}</h3>
-                <p style={{ color: "var(--ink-muted)", margin: "0 0 20px", flex: 1 }}>{item.body}</p>
-                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 24px", borderTop: "1px solid var(--line)" }}>
-                  {item.bullets.map((b, j) =>
-                <li key={j} style={{ padding: "10px 0", borderBottom: "1px solid var(--line)", fontSize: 14.5, display: "flex", justifyContent: "space-between", color: "var(--ink-soft)" }}>
-                      <span>{b}</span><span style={{ color: "var(--sage)" }}>✓</span>
-                    </li>
-                )}
-                </ul>
-                <button className="btn btn-outline" style={{ alignSelf: "flex-start" }} onClick={() => setRoute(routes[i])}>
-                  {lang === 'pl' ? 'Dowiedz się więcej' : 'Learn more'} <Arrow />
-                </button>
-              </div>
+        {/* Sekcja A — Dla firm: dwie ramki tematyczne (Środowisko + BHP) */}
+        <div className="pillar-subhead">
+          <div className="pillar-subhead-bar"></div>
+          <div className="eyebrow">{t.firm_eyebrow}</div>
+        </div>
+
+        {/* Ramka 1 — Środowisko (BDO + Obsługa środowiskowa) */}
+        <div className="pillar-group">
+          <div className="pillar-grouphead">
+            <div className="pillar-grouptag">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z"/></svg>
+              {t.firm_os_eyebrow}
             </div>
-          )}
+            <p className="pillar-grouplead">{t.firm_os_lead}</p>
+          </div>
+          <div className="pillar-grid-pair">
+            {t.firm_items.filter(it => it.route !== "bhp").map((item, i) => renderFirmCard(item, i))}
+          </div>
+        </div>
+
+        {/* Ramka 2 — BHP (Szkolenia + Obsługa) */}
+        <div className="pillar-group">
+          <div className="pillar-grouphead">
+            <div className="pillar-grouptag">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              {t.firm_bhp_eyebrow}
+            </div>
+            <p className="pillar-grouplead">{t.firm_bhp_lead}</p>
+          </div>
+          <div className="pillar-grid-pair">
+            {t.firm_items.filter(it => it.route === "bhp").map((item, i) => renderFirmCard(item, i + 2))}
+          </div>
+        </div>
+
+        {/* Sekcja B — Doskonalenie (Akademia Pro) */}
+        <div className="pillar-pro-section">
+          <div className="pillar-pro-subhead">
+            <div className="pillar-pro-subhead-tag">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/></svg>
+              {t.pro_eyebrow}
+            </div>
+            <p className="pillar-pro-subhead-lead">{t.pro_lead}</p>
+          </div>
+          <div className="pillar-grid-pro">
+            {t.pro_items.map(renderProCard)}
+          </div>
         </div>
       </div>
     </section>);
@@ -132,11 +214,27 @@ const Pillars = ({ lang, setRoute }) => {
 // Interactive service picker
 const ServicePicker = ({ lang, setRoute }) => {
   const [active, setActive] = React.useState(0);
-  const t = window.COPY[lang].pillars.items;
-  const routes = ["bdo", "doradztwo", "bhp"];
+  const t = window.COPY[lang].pillars.firm_items;
   return (
-    <section style={{ background: "var(--ink)", color: "var(--cream)" }}>
-      <div className="container-wide">
+    <section style={{ background: "var(--ink)", color: "var(--cream)", position: "relative", overflow: "hidden" }}>
+      <img
+        src="assets/ecosafe-logo.png"
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-8%",
+          top: "50%",
+          transform: "translateY(-50%) scaleX(-1)",
+          height: "140%",
+          width: "auto",
+          opacity: 0.05,
+          filter: "invert(1) grayscale(1) contrast(1.2)",
+          pointerEvents: "none",
+          userSelect: "none",
+        }}
+      />
+      <div className="container-wide" style={{ position: "relative", zIndex: 1 }}>
         <div className="eyebrow" style={{ color: "rgba(251,248,241,0.55)", marginBottom: 20 }}>
           {lang === 'pl' ? 'Wybierz obszar' : 'Pick an area'}
         </div>
@@ -167,7 +265,7 @@ const ServicePicker = ({ lang, setRoute }) => {
                   </div>
                 )}
               </div>
-              <button className="btn btn-sage" onClick={() => setRoute(routes[active])}>
+              <button className="btn btn-sage" onClick={() => setRoute(t[active].route)}>
                 {lang === 'pl' ? 'Przejdź do usługi' : 'Open service'} <Arrow />
               </button>
             </div>
